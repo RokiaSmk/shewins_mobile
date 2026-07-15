@@ -1,0 +1,10 @@
+class AppRoutes {
+  AppRoutes._();
+
+  static const splash = "/";
+  static const onboarding = "/onboarding";
+  static const login = "/login";
+  static const register = "/register";
+  static const profile = "/profile";
+  static const dashboard = "/dashboard";
+}
