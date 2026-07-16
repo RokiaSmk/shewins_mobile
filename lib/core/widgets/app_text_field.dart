@@ -9,6 +9,7 @@ class AppTextField extends StatelessWidget {
   final String? hint;
   final IconData? prefixIcon;
   final IconData? suffixIcon;
+  final Widget? prefix;
   final TextInputType keyboardType;
   final TextInputAction textInputAction;
   final bool readOnly;
@@ -25,6 +26,7 @@ class AppTextField extends StatelessWidget {
     this.hint,
     this.prefixIcon,
     this.suffixIcon,
+    this.prefix,
     this.keyboardType = TextInputType.text,
     this.textInputAction = TextInputAction.next,
     this.readOnly = false,
@@ -66,7 +68,7 @@ class AppTextField extends StatelessWidget {
             hintStyle: TextStyle(
               color: Colors.grey.shade500,
             ),
-
+            prefix: prefix,
             prefixIcon:
                 prefixIcon != null ? Icon(prefixIcon) : null,
 

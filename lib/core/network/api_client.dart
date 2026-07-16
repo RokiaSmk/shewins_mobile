@@ -16,5 +16,15 @@ class ApiClient {
         "Accept": "application/json",
       },
     ),
-  )..interceptors.add(AuthInterceptor());
+  )
+    ..interceptors.add(
+      LogInterceptor(
+        request: true,
+        requestHeader: true,
+        requestBody: true,
+        responseBody: true,
+        error: true,
+      ),
+    )
+    ..interceptors.add(AuthInterceptor());
 }

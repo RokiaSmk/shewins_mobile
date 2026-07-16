@@ -7,6 +7,7 @@ import '../../../core/constants/app_routes.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_password_field.dart';
 import '../../../core/widgets/app_text_field.dart';
+import '../../profile/providers/profile_notifier.dart';
 import '../providers/auth_notifier.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
@@ -37,7 +38,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 28,
+            vertical: 24,
+          ),
           child: Form(
             key: _formKey,
             child: Column(
@@ -47,21 +51,30 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
                 Hero(
                   tag: "app_logo",
-                  child: Image.asset(AppAssets.symbol, width: 90),
+                  child: Image.asset(
+                    AppAssets.symbol,
+                    width: 90,
+                  ),
                 ),
 
                 const SizedBox(height: 20),
 
                 const Text(
                   "Bon retour !",
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
 
                 const SizedBox(height: 8),
 
                 Text(
                   "Connectez-vous pour accéder à votre espace SheWins.",
-                  style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey.shade600,
+                  ),
                   textAlign: TextAlign.center,
                 ),
 
@@ -102,7 +115,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       return;
                     }
 
-                    final success = await ref
+                    final user = await ref
                         .read(authProvider.notifier)
                         .login(
                           email: emailController.text.trim(),
@@ -111,14 +124,27 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
                     if (!mounted) return;
 
-                    if (success) {
-                      context.go(AppRoutes.dashboard);
-                    } else {
+                    if (user == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text("Email ou mot de passe incorrect."),
+                          content: Text(
+                            "Email ou mot de passe incorrect.",
+                          ),
                         ),
                       );
+                      return;
+                    }
+
+                    if (user.profileCompleted) {
+                      await ref
+                          .read(profileProvider.notifier)
+                          .loadProfile();
+
+                      if (!mounted) return;
+
+                      context.go(AppRoutes.dashboard);
+                    } else {
+                      context.go(AppRoutes.completeProfile);
                     }
                   },
                 ),
@@ -128,12 +154,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Vous n'avez pas de compte ?"),
+                    const Text(
+                      "Vous n'avez pas de compte ?",
+                    ),
                     TextButton(
                       onPressed: () {
                         context.go(AppRoutes.register);
                       },
-                      child: const Text("Créer un compte"),
+                      child: const Text(
+                        "Créer un compte",
+                      ),
                     ),
                   ],
                 ),

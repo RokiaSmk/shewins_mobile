@@ -19,34 +19,36 @@ class AuthNotifier extends Notifier<bool> {
     return false;
   }
 
-  Future<bool> login({
-    required String email,
-    required String password,
-  }) async {
-    state = true;
+  Future<AuthUser?> login({
+  required String email,
+  required String password,
+}) async {
+  state = true;
 
-    try {
-      final response = await _repository.login(
-        LoginRequest(
-          email: email,
-          password: password,
-        ),
-      );
+  try {
+    final response = await _repository.login(
+      LoginRequest(
+        email: email,
+        password: password,
+      ),
+    );
 
-      if (response.success) {
+    if (response.success) {
       await TokenStorage.saveToken(
         response.data.token,
       );
+
+      return response.data.member;
     }
 
-    return response.success;
-    } catch (e) {
-      debugPrint("Erreur Login : $e");
-      return false;
-    } finally {
-      state = false;
-    }
+    return null;
+  } catch (e) {
+    debugPrint("Erreur Login : $e");
+    return null;
+  } finally {
+    state = false;
   }
+}
 
   Future<LoginResponse?> register({
     required String firstName,

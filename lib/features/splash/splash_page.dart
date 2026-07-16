@@ -8,6 +8,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../auth/providers/auth_notifier.dart';
+import '../profile/providers/profile_notifier.dart';
 
 class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({super.key});
@@ -67,9 +68,17 @@ class _SplashPageState extends ConsumerState<SplashPage>{
     return;
   }
 
-  // TODO
-  // Quand CompleteProfile et Dashboard seront créés
-  // on redirigera ici selon user.profileCompleted.
+  if (user.profileCompleted) {
+    await ref
+        .read(profileProvider.notifier)
+        .loadProfile();
+
+    if (!mounted) return;
+
+    context.go(AppRoutes.dashboard);
+  } else {
+    context.go(AppRoutes.completeProfile);
+  }
 
   context.go(AppRoutes.login);
   }
