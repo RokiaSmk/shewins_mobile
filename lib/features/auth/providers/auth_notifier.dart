@@ -100,4 +100,20 @@ class AuthNotifier extends Notifier<bool> {
   Future<void> logout() async {
     await TokenStorage.deleteToken();
   }
+  Future<bool> deleteAccount() async {
+  state = true;
+
+  try {
+    await _repository.deleteAccount();
+
+    await TokenStorage.deleteToken();
+
+    return true;
+  } catch (e) {
+    debugPrint("Erreur suppression du compte : $e");
+    return false;
+  } finally {
+    state = false;
+  }
+}
 }

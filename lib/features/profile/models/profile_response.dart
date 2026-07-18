@@ -52,6 +52,8 @@ class UserProfile {
     required this.bio,
     required this.profileCompleted,
   });
+  
+  String get fullName => "$firstName $lastName";
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
     return UserProfile(

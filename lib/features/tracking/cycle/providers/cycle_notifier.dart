@@ -181,6 +181,10 @@ class CycleNotifier extends Notifier<CycleState> {
     );
   } catch (e) {
     debugPrint(e.toString());
+
+    state = state.copyWith(
+      profile: null,
+    );
   }
 }
 Future<void> loadCycles() async {
@@ -201,6 +205,33 @@ Future<void> loadCycles() async {
       );
     } catch (_) {
       return null;
+    }
+  }
+ Future<void> loadCycle(
+    String cycleId,
+  ) async {
+    state = state.copyWith(
+      isLoading: true,
+      error: null,
+    );
+
+    try {
+      final response = await _repository.getCycle(cycleId);
+
+      state = state.copyWith(
+        selectedCycle: response.data,
+      );
+    } catch (e) {
+      debugPrint(e.toString());
+
+      state = state.copyWith(
+        error: e.toString(),
+        selectedCycle: null,
+      );
+    } finally {
+      state = state.copyWith(
+        isLoading: false,
+      );
     }
   }
 }

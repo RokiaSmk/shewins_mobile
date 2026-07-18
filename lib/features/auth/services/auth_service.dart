@@ -29,4 +29,9 @@ Future<MeResponse> getCurrentUser() async {
 
   return MeResponse.fromJson(response.data);
   }
+  Future<void> deleteAccount() async {
+  await ApiClient.dio.delete(
+    ApiConstants.deleteAccount,
+  );
+}
 }

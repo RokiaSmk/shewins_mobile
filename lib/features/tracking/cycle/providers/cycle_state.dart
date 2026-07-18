@@ -15,16 +15,17 @@ class CycleState {
   });
 
   CycleState copyWith({
-    bool? isLoading,
-    CycleProfile? profile,
-    List<MenstrualCycle>? cycles,
-    String? error,
-  }) {
-    return CycleState(
-      isLoading: isLoading ?? this.isLoading,
-      profile: profile ?? this.profile,
-      cycles: cycles ?? this.cycles,
-      error: error,
-    );
-  }
+  bool? isLoading,
+  CycleProfile? profile,
+  List<MenstrualCycle>? cycles,
+  MenstrualCycle? selectedCycle,
+  String? error,
+}) {
+  return CycleState(
+    isLoading: isLoading ?? this.isLoading,
+    profile: profile ?? this.profile,
+    cycles: cycles ?? this.cycles,
+    error: error,
+  );
+}
 }

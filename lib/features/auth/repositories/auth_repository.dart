@@ -16,4 +16,7 @@ class AuthRepository {
 Future<MeResponse> getCurrentUser() async {
   return await _authService.getCurrentUser();
   }
+  Future<void> deleteAccount() async {
+  await _authService.deleteAccount();
+}
 }

@@ -153,4 +153,7 @@ return response;
     );
   }
 }
+void clearProfile() {
+  state = const ProfileState();
+}
 }

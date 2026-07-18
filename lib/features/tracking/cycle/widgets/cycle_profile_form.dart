@@ -6,6 +6,7 @@ import '../../../../core/widgets/app_card.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../providers/cycle_notifier.dart';
 import '../requests/create_cycle_profile_request.dart';
+import 'package:go_router/go_router.dart';
 
 class CycleProfileForm extends ConsumerStatefulWidget {
   const CycleProfileForm({super.key});
@@ -36,6 +37,7 @@ class _CycleProfileFormState
 
   @override
   Widget build(BuildContext context) {
+    final loading = ref.watch(cycleProvider).isLoading;
     return Form(
       key: _formKey,
       child: ListView(
@@ -79,6 +81,7 @@ class _CycleProfileFormState
 
                 AppButton(
                   text: "Enregistrer",
+                  isLoading: loading,
                   onPressed: () async {
                     if (!_formKey.currentState!.validate()) {
                       return;
@@ -108,6 +111,8 @@ class _CycleProfileFormState
                           ),
                         ),
                       );
+
+                      context.pop();
                     }
                   },
                 ),

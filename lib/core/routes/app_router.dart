@@ -17,6 +17,25 @@ import '../../features/tracking/symptom/pages/symptom_page.dart';
 import '../../features/tracking/symptom/pages/create_symptom_page.dart';
 import '../../features/tracking/emotion/pages/emotion_page.dart';
 import '../../features/tracking/food/pages/create_food_page.dart';
+import '../../features/notifications/pages/notification_page.dart';
+import '../../features/reports/pages/report_page.dart';
+import '../../features/community/publication/pages/community_page.dart';
+import '../../features/community/publication/pages/create_publication_page.dart';
+import '../../features/education/pages/education_detail_page.dart';
+import '../../features/education/pages/education_page.dart';
+import '../../features/education/models/education_response.dart';
+import '../../features/main/pages/main_page.dart';
+import '../../features/profile/pages/profile_page.dart';
+import '../../features/tracking/cycle/models/menstrual_cycle.dart';
+import '../../features/education/models/education_response.dart';
+import '../../features/settings/pages/settings_page.dart';
+import '../../features/settings/pages/edit_profile_page.dart';
+import '../../features/settings/pages/notification_settings_page.dart';
+import '../../features/settings/pages/theme_page.dart';
+import '../../features/settings/pages/privacy_page.dart';
+import '../../features/settings/pages/help_page.dart';
+import '../../features/settings/pages/about_page.dart';
+import '../../features/settings/pages/delete_account_page.dart';
 
 class AppRouter {
   AppRouter._();
@@ -62,11 +81,6 @@ class AppRouter {
         path: AppRoutes.startCycle,
         builder: (context, state) => const StartCyclePage(),
       ),
-
-      GoRoute(
-        path: AppRoutes.cycleDetails,
-        builder: (context, state) => const CycleDetailsPage(),
-      ),
       GoRoute(
         path: AppRoutes.symptoms,
         builder: (context, state) => const SymptomPage(),
@@ -93,6 +107,89 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.createFood,
         builder: (context, state) => const CreateFoodPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.notifications,
+        builder: (context, state) =>
+            const NotificationPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.reports,
+        builder: (_, __) =>
+            const ReportPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.community,
+        builder: (_, __) => const CommunityPage(),
+      ),
+
+      GoRoute(
+        path: AppRoutes.createPublication,
+        builder: (_, __) => const CreatePublicationPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.education,
+        builder: (context, state) => const EducationPage(),
+      ),
+
+      GoRoute(
+        path: AppRoutes.educationDetail,
+        builder: (context, state) => EducationDetailPage(
+          article: state.extra as EducationResponse,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.profile,
+        builder: (_, __) => const ProfilePage(),
+      ),
+      GoRoute(
+        path: AppRoutes.main,
+        builder: (_, __) => const MainPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.settings,
+        builder: (_, __) => const SettingsPage(),
+      ),
+
+      GoRoute(
+        path: AppRoutes.editProfile,
+        builder: (_, __) => const EditProfilePage(),
+      ),
+
+      GoRoute(
+        path: AppRoutes.notificationSettings,
+        builder: (_, __) => const NotificationSettingsPage(),
+      ),
+
+      GoRoute(
+        path: AppRoutes.theme,
+        builder: (_, __) => const ThemePage(),
+      ),
+
+      GoRoute(
+        path: AppRoutes.privacy,
+        builder: (_, __) => const PrivacyPage(),
+      ),
+
+      GoRoute(
+        path: AppRoutes.help,
+        builder: (_, __) => const HelpPage(),
+      ),
+
+      GoRoute(
+        path: AppRoutes.about,
+        builder: (_, __) => const AboutPage(),
+      ),
+
+      GoRoute(
+        path: AppRoutes.deleteAccount,
+        builder: (_, __) => const DeleteAccountPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.cycleDetails,
+        builder: (context, state) => CycleDetailsPage(
+          cycle: state.extra as MenstrualCycle,
+        ),
       ),
     ],
   );

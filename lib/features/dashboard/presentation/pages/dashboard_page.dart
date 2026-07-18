@@ -5,76 +5,163 @@ import '../../../tracking/cycle/providers/cycle_notifier.dart';
 import '../../../tracking/symptom/providers/symptom_notifier.dart';
 import '../../../tracking/emotion/providers/emotion_notifier.dart';
 import '../../../tracking/food/providers/food_notifier.dart';
-import '../../widgets/cycle_card.dart';
+
+import '../../../analytics/nutrition/providers/nutrition_notifier.dart';
+import '../../../analytics/prediction/providers/prediction_notifier.dart';
+import '../../../analytics/statistics/providers/statistics_notifier.dart';
+import '../../../analytics/health_insight/providers/health_insight_notifier.dart';
+
+import '../../../notifications/providers/notification_notifier.dart';
+import '../../../reports/providers/report_notifier.dart';
+
 import '../../widgets/dashboard_header.dart';
+import '../../widgets/health_overview_card.dart';
+import '../../widgets/quick_actions_card.dart';
+import '../../widgets/prediction_card.dart';
+import '../../widgets/cycle_card.dart';
+import '../../widgets/symptom_card.dart';
 import '../../widgets/emotion_card.dart';
 import '../../widgets/food_card.dart';
-import '../../widgets/health_overview_card.dart';
-import '../../widgets/insight_card.dart';
-import '../../widgets/quick_actions_card.dart';
-import '../../widgets/statistics_card.dart';
-import '../../widgets/symptom_card.dart';
 import '../../widgets/nutrition_analysis_card.dart';
-import '../../../analytics/nutrition/providers/nutrition_notifier.dart';
+import '../../widgets/insight_card.dart';
+import '../../widgets/statistics_card.dart';
+import '../../widgets/medical_report_card.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
   const DashboardPage({super.key});
 
   @override
-  ConsumerState<DashboardPage> createState() => _DashboardPageState();
+  ConsumerState<DashboardPage> createState() =>
+      _DashboardPageState();
 }
 
-class _DashboardPageState extends ConsumerState<DashboardPage> {
+class _DashboardPageState
+    extends ConsumerState<DashboardPage> {
+
   @override
   void initState() {
     super.initState();
 
-    Future.microtask(() async {
-      await ref.read(cycleProvider.notifier).loadCycleProfile();
-      await ref.read(cycleProvider.notifier).loadCycles();
-      await ref.read(symptomProvider.notifier).loadMemberSymptoms();
-      await ref.read(emotionProvider.notifier).loadMemberEmotions();
-      await ref.read(foodProvider.notifier).loadMemberFoodJournals();
-      await ref.read(nutritionProvider.notifier).loadNutritionAnalysis();
-    });
+    Future.microtask(_refreshDashboard);
+  }
+
+  Future<void> _refreshDashboard() async {
+    await Future.wait([
+      ref
+          .read(cycleProvider.notifier)
+          .loadCycleProfile(),
+
+      ref
+          .read(cycleProvider.notifier)
+          .loadCycles(),
+
+      ref
+          .read(symptomProvider.notifier)
+          .loadMemberSymptoms(),
+
+      ref
+          .read(emotionProvider.notifier)
+          .loadMemberEmotions(),
+
+      ref
+          .read(foodProvider.notifier)
+          .loadMemberFoodJournals(),
+
+      ref
+          .read(nutritionProvider.notifier)
+          .loadNutritionAnalysis(),
+
+      ref
+          .read(predictionProvider.notifier)
+          .loadLatestPrediction(),
+
+      ref
+          .read(statisticsProvider.notifier)
+          .loadLatestStatistics(),
+
+      ref
+          .read(healthInsightProvider.notifier)
+          .loadLatestHealthInsight(),
+
+      ref
+          .read(notificationProvider.notifier)
+          .loadNotifications(),
+
+      ref
+          .read(notificationProvider.notifier)
+          .loadUnreadNotifications(),
+
+      ref
+          .read(reportProvider.notifier)
+          .loadReports(),
+    ]);
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Color(0xFFF8F5FA),
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8F5FA),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              DashboardHeader(),
+        child: RefreshIndicator(
+          onRefresh: _refreshDashboard,
+          child: SingleChildScrollView(
+            physics:
+                const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.all(20),
+            child: const Column(
+              crossAxisAlignment:
+                  CrossAxisAlignment.start,
+              children: [
 
-              SizedBox(height: 24),
+                DashboardHeader(),
 
-              HealthOverviewCard(),
+                SizedBox(height: 24),
 
-              SizedBox(height: 24),
+                HealthOverviewCard(),
 
-              CycleCard(),
+                SizedBox(height: 24),
 
-              SymptomCard(),
+                QuickActionsCard(),
 
-              EmotionCard(),
+                SizedBox(height: 24),
 
-              FoodCard(),
+                PredictionCard(),
 
-              NutritionAnalysisCard(),
+                SizedBox(height: 20),
 
-              InsightCard(),
+                CycleCard(),
 
-              StatisticsCard(),
+                SizedBox(height: 20),
 
-              QuickActionsCard(),
+                SymptomCard(),
 
-              SizedBox(height: 30),
-            ],
+                SizedBox(height: 20),
+
+                EmotionCard(),
+
+                SizedBox(height: 20),
+
+                FoodCard(),
+
+                SizedBox(height: 20),
+
+                NutritionAnalysisCard(),
+
+                SizedBox(height: 20),
+
+                InsightCard(),
+
+                SizedBox(height: 20),
+
+                StatisticsCard(),
+
+                SizedBox(height: 20),
+
+                MedicalReportCard(),
+
+                SizedBox(height: 30),
+              ],
+            ),
           ),
         ),
       ),

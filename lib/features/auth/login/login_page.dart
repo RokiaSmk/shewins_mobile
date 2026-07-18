@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/constants/app_assets.dart';
-import '../../../core/constants/app_routes.dart';
-import '../../../core/widgets/app_button.dart';
-import '../../../core/widgets/app_password_field.dart';
-import '../../../core/widgets/app_text_field.dart';
-import '../../profile/providers/profile_notifier.dart';
+import '../../../../core/constants/app_assets.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../../core/constants/app_routes.dart';
+import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/app_text_field.dart';
 import '../providers/auth_notifier.dart';
-
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
@@ -20,14 +18,38 @@ class LoginPage extends ConsumerStatefulWidget {
 class _LoginPageState extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
 
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   @override
   void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _login() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final user = await ref.read(authProvider.notifier).login(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+        );
+
+    if (!mounted) return;
+
+    if (user != null) {
+      context.go(AppRoutes.dashboard);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text(
+            "Adresse e-mail ou mot de passe incorrect.",
+          ),
+        ),
+      );
+    }
   }
 
   @override
@@ -35,139 +57,172 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final isLoading = ref.watch(authProvider);
 
     return Scaffold(
-      resizeToAvoidBottomInset: true,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 28,
-            vertical: 24,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFFFDFBFF),
+              Color(0xFFF6F2FC),
+            ],
           ),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 20),
-
-                Hero(
-                  tag: "app_logo",
-                  child: Image.asset(
-                    AppAssets.symbol,
-                    width: 90,
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: TweenAnimationBuilder<double>(
+              duration: const Duration(milliseconds: 700),
+              curve: Curves.easeOut,
+              tween: Tween(begin: .95, end: 1),
+              builder: (context, value, child) {
+                return Transform.scale(
+                  scale: value,
+                  child: Opacity(
+                    opacity: value,
+                    child: child,
                   ),
+                );
+              },
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: 450,
                 ),
-
-                const SizedBox(height: 20),
-
-                const Text(
-                  "Bon retour !",
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
+                child: Card(
+                  elevation: 12,
+                  shadowColor: Colors.black12,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(28),
                   ),
-                ),
-
-                const SizedBox(height: 8),
-
-                Text(
-                  "Connectez-vous pour accéder à votre espace SheWins.",
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey.shade600,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-
-                const SizedBox(height: 40),
-
-                AppTextField(
-                  controller: emailController,
-                  label: "Adresse e-mail",
-                  hint: "exemple@email.com",
-                  prefixIcon: Icons.email_outlined,
-                  keyboardType: TextInputType.emailAddress,
-                ),
-
-                const SizedBox(height: 20),
-
-                AppPasswordField(
-                  controller: passwordController,
-                  label: "Mot de passe",
-                ),
-
-                const SizedBox(height: 12),
-
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {},
-                    child: const Text("Mot de passe oublié ?"),
-                  ),
-                ),
-
-                const SizedBox(height: 24),
-
-                AppButton(
-                  text: "Se connecter",
-                  isLoading: isLoading,
-                  onPressed: () async {
-                    if (!_formKey.currentState!.validate()) {
-                      return;
-                    }
-
-                    final user = await ref
-                        .read(authProvider.notifier)
-                        .login(
-                          email: emailController.text.trim(),
-                          password: passwordController.text,
-                        );
-
-                    if (!mounted) return;
-
-                    if (user == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            "Email ou mot de passe incorrect.",
+                  child: Padding(
+                    padding: const EdgeInsets.all(36),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 110,
+                            height: 110,
+                            decoration: BoxDecoration(
+                              color: AppColors.primary.withOpacity(.08),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(20),
+                              child: Image.asset(
+                                AppAssets.logo,
+                              ),
+                            ),
                           ),
-                        ),
-                      );
-                      return;
-                    }
 
-                    if (user.profileCompleted) {
-                      await ref
-                          .read(profileProvider.notifier)
-                          .loadProfile();
+                          const SizedBox(height: 28),
 
-                      if (!mounted) return;
+                          const Text(
+                            "Bienvenue",
+                            style: TextStyle(
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
 
-                      context.go(AppRoutes.dashboard);
-                    } else {
-                      context.go(AppRoutes.completeProfile);
-                    }
-                  },
-                ),
+                          const SizedBox(height: 8),
 
-                const SizedBox(height: 32),
+                          Text(
+                            "Connectez-vous pour continuer votre suivi de santé avec SheWins.",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 15,
+                              height: 1.5,
+                            ),
+                          ),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "Vous n'avez pas de compte ?",
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        context.go(AppRoutes.register);
-                      },
-                      child: const Text(
-                        "Créer un compte",
+                          const SizedBox(height: 36),
+
+                          AppTextField(
+                            controller: _emailController,
+                            label: "Adresse e-mail",
+                            hint: "exemple@email.com",
+                            prefixIcon: Icons.email_outlined,
+                            keyboardType: TextInputType.emailAddress,
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return "Veuillez saisir votre adresse e-mail.";
+                              }
+                              return null;
+                            },
+                          ),
+
+                          const SizedBox(height: 20),
+
+                          AppTextField(
+                            controller: _passwordController,
+                            label: "Mot de passe",
+                            hint: "••••••••••••",
+                            prefixIcon: Icons.lock_outline,
+                            obscureText: true,
+                            textInputAction: TextInputAction.done,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Veuillez saisir votre mot de passe.";
+                              }
+                              return null;
+                            },
+                            onFieldSubmitted: (_) => _login(),
+                          ),
+                                                    const SizedBox(height: 28),
+
+                          Divider(
+                            color: Colors.grey.shade200,
+                          ),
+
+                          const SizedBox(height: 28),
+
+                          SizedBox(
+                            width: double.infinity,
+                            child: AppButton(
+                              text: "Se connecter",
+                              isLoading: isLoading,
+                              onPressed: _login,
+                            ),
+                          ),
+
+                          const SizedBox(height: 20),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                "Vous n'avez pas de compte ?",
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  context.go(AppRoutes.register);
+                                },
+                                child: const Text(
+                                  "S'inscrire",
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 16),
+
+                          Text(
+                            "SheWins • Prenez soin de votre santé",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.grey.shade500,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
+                  ),
                 ),
-              ],
+              ),
             ),
           ),
         ),
