@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/widgets/app_card.dart';
 
+import '../../../profile/providers/profile_notifier.dart';
+
 import '../models/comment.dart';
 import '../pages/edit_comment_page.dart';
 import '../providers/comment_notifier.dart';
@@ -141,6 +143,13 @@ class CommentCard extends ConsumerWidget {
     final formatter =
         DateFormat("dd/MM/yyyy HH:mm");
 
+    final profile =
+        ref.watch(profileProvider).profile;
+
+    final canManage =
+        profile != null &&
+        comment.authorId == profile.memberId;
+
     return AppCard(
       icon: Icons.chat_bubble_outline,
       title: "Commentaire",
@@ -187,17 +196,18 @@ class CommentCard extends ConsumerWidget {
                       ),
                     ),
 
-                    IconButton(
-                      onPressed: () {
-                        _showCommentMenu(
-                          context,
-                          ref,
-                        );
-                      },
-                      icon: const Icon(
-                        Icons.more_horiz,
+                    if (canManage)
+                      IconButton(
+                        onPressed: () {
+                          _showCommentMenu(
+                            context,
+                            ref,
+                          );
+                        },
+                        icon: const Icon(
+                          Icons.more_horiz,
+                        ),
                       ),
-                    ),
                   ],
                 ),
 

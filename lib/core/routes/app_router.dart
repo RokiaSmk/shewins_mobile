@@ -65,8 +65,12 @@ class AppRouter {
       ),
       GoRoute(
         path: AppRoutes.dashboard,
-        builder: (context, state) => const DashboardPage(),
+        builder: (context, state) => const MainPage(),
       ),
+      /*GoRoute(
+        path: AppRoutes.dashboard,
+        builder: (context, state) => const DashboardPage(),
+      ),*/
       GoRoute(
         path: AppRoutes.cycleProfile,
         builder: (context, state) => const CycleProfilePage(),
